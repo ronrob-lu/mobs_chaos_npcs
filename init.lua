@@ -82,19 +82,18 @@ minetest.register_node("mobs_chaos_npcs:chaos_chest", {
 	mesh = "chest.glb",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	visual_scale = 20.0,
 	walkable = true,
 	buildable_to = false,
-	selection_box = {type = "fixed", fixed = {-1.5, -0.5, -1.5, 1.5, 1.5, 1.5}},
-	collision_box = {type = "fixed", fixed = {-1.5, -0.5, -1.5, 1.5, 1.5, 1.5}},
+	selection_box = {type = "fixed", fixed = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5}},
+	collision_box = {type = "fixed", fixed = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5}},
 	groups = {choppy = 2, oddly_breakable_by_hand = 2},
 	tiles = {"colormap.png"},
 
 	-- Open/close animation definitions per specification (0.05s buffered)
 	-- chest.glb timings: open = 0.3s, close = 1.0s
 	animation = {
-		open_start = 0.05, open_end = 0.35,
-		close_start = 0.40, close_end = 1.40,
+		open_start = 2, open_end = 11,
+		close_start = 12, close_end = 42,
 	},
 
 	on_construct = function(pos)
@@ -116,8 +115,9 @@ minetest.register_node("mobs_chaos_npcs:chaos_chest", {
 
 	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
 		minetest.show_formspec(clicker:get_player_name(), "mobs_chaos_npcs:chaos_chest_"..minetest.pos_to_string(pos), get_chest_formspec(pos))
+		minetest.sound_play("default_chest_open", {pos = pos, gain = 0.3, max_hear_distance = 10}, true)
 		if minetest.set_node_animation then
-			minetest.set_node_animation(pos, {range = {x = 0.05, y = 0.35}, speed = 1, blend = 0})
+			minetest.set_node_animation(pos, {range = {x = 2, y = 11}, speed = 30, blend = 0})
 		end
 	end,
 })
@@ -127,8 +127,11 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		if fields.quit then
 			local pos_str = formname:sub(29)
 			local pos = minetest.string_to_pos(pos_str)
-			if pos and minetest.set_node_animation then
-				minetest.set_node_animation(pos, {range = {x = 0.40, y = 1.40}, speed = 1, blend = 0})
+			if pos then
+				minetest.sound_play("default_chest_close", {pos = pos, gain = 0.3, max_hear_distance = 10}, true)
+				if minetest.set_node_animation then
+					minetest.set_node_animation(pos, {range = {x = 12, y = 42}, speed = 30, blend = 0})
+				end
 			end
 		end
 	end
