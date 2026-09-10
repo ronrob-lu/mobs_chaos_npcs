@@ -3,23 +3,26 @@
 local S = minetest.get_translator("mobs_chaos_npcs")
 
 -- Helper function to register falling mesh nodes
-local function register_falling_mesh(name, desc, mesh_file)
+local function register_falling_mesh(name, desc, mesh_file, box)
 	minetest.register_node("mobs_chaos_npcs:" .. name, {
 		description = desc,
 		drawtype = "mesh",
 		mesh = mesh_file,
 		paramtype2 = "facedir",
-		visual_scale = 100.0,
 		paramtype = "light",
+		walkable = true,
+		buildable_to = false,
+		selection_box = {type = "fixed", fixed = box},
+		collision_box = {type = "fixed", fixed = box},
 		groups = {falling_node = 1, oddly_breakable_by_hand = 3},
-		tiles = {"texture_colormap.png"}, -- Dummy tile to suppress missing texture warnings, colored by palette
+		tiles = {"colormap.png"}, -- Dummy tile to suppress missing texture warnings, colored by palette
 	})
 end
 
-register_falling_mesh("barrel", "Chaos Barrel", "barrel.obj")
-register_falling_mesh("chair", "Chaos Chair", "chair.obj")
-register_falling_mesh("table", "Chaos Table", "table.obj")
-register_falling_mesh("wood_structure", "Chaos Wood Structure", "wood-structure.obj")
+register_falling_mesh("barrel", "Chaos Barrel", "barrel.obj", {-0.78, -0.5, -0.78, 0.78, 0.93, 0.78})
+register_falling_mesh("chair", "Chaos Chair", "chair.obj", {-0.52, -0.5, -0.56, 0.52, 0.93, 0.56})
+register_falling_mesh("table", "Chaos Table", "table.obj", {-1.31, -0.5, -0.98, 1.31, 0.44, 0.98})
+register_falling_mesh("wood_structure", "Chaos Wood Structure", "wood-structure.obj", {-1.63, -0.5, -1.63, 1.63, 2.5, 1.63})
 
 -- Chaos Chest implementation
 local function get_chest_formspec(pos)
@@ -38,9 +41,13 @@ minetest.register_node("mobs_chaos_npcs:chaos_chest", {
 	mesh = "chest.glb",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	visual_scale = 100.0,
+	visual_scale = 3.0,
+	walkable = true,
+	buildable_to = false,
+	selection_box = {type = "fixed", fixed = {-1.5, -0.5, -1.5, 1.5, 1.5, 1.5}},
+	collision_box = {type = "fixed", fixed = {-1.5, -0.5, -1.5, 1.5, 1.5, 1.5}},
 	groups = {choppy = 2, oddly_breakable_by_hand = 2},
-	tiles = {"texture_colormap.png"},
+	tiles = {"colormap.png"},
 
 	-- Open/close animation definitions per specification (0.05s buffered)
 	-- chest.glb timings: open = 0.3s, close = 1.0s
@@ -88,20 +95,24 @@ end)
 
 -- Animation tables based on the glb timings with 0.05s buffer
 local human_anim = {
-	stand_start = 0.200, stand_end = 1.533,
-	walk_start = 1.583, walk_end = 2.250,
-	run_start = 2.300, run_end = 2.800,
-	punch_start = 8.035, punch_end = 8.452,
-	die_start = 4.434, die_end = 4.767,
+	stand_start = 0.200, stand_end = 1.533, stand_speed = 1,
+	walk_start = 1.583, walk_end = 2.250, walk_speed = 1,
+	run_start = 2.300, run_end = 2.800, run_speed = 1,
+	punch_start = 8.033, punch_end = 8.450, punch_speed = 1,
+	die_start = 4.433, die_end = 4.767, die_speed = 1,
+	attack_start = 8.033, attack_end = 8.450, attack_speed = 1,
+	shoot_start = 8.033, shoot_end = 8.450, shoot_speed = 1,
 	speed_normal = 1, speed_run = 1
 }
 
 local orc_anim = {
-	stand_start = 0.200, stand_end = 1.533,
-	walk_start = 1.583, walk_end = 2.250,
-	run_start = 2.300, run_end = 2.800,
-	punch_start = 8.033, punch_end = 8.450,
-	die_start = 4.433, die_end = 4.767,
+	stand_start = 0.200, stand_end = 1.533, stand_speed = 1,
+	walk_start = 1.583, walk_end = 2.250, walk_speed = 1,
+	run_start = 2.300, run_end = 2.800, run_speed = 1,
+	punch_start = 8.033, punch_end = 8.450, punch_speed = 1,
+	die_start = 4.433, die_end = 4.767, die_speed = 1,
+	attack_start = 8.033, attack_end = 8.450, attack_speed = 1,
+	shoot_start = 8.033, shoot_end = 8.450, shoot_speed = 1,
 	speed_normal = 1, speed_run = 1
 }
 
@@ -110,8 +121,8 @@ minetest.register_entity("mobs_chaos_npcs:weapon_spear", {
 	initial_properties = {
 		visual = "mesh",
 		mesh = "weapon-spear.glb",
-		textures = {"texture_colormap.png"},
-		visual_size = {x = 100, y = 100, z = 100},
+		textures = {"colormap.png"},
+		visual_size = {x = 6.5, y = 6.5, z = 6.5},
 		physical = false,
 		collide_with_objects = false,
 	}
@@ -121,8 +132,8 @@ minetest.register_entity("mobs_chaos_npcs:weapon_sword", {
 	initial_properties = {
 		visual = "mesh",
 		mesh = "weapon-sword.glb",
-		textures = {"texture_colormap.png"},
-		visual_size = {x = 100, y = 100, z = 100},
+		textures = {"colormap.png"},
+		visual_size = {x = 6.5, y = 6.5, z = 6.5},
 		physical = false,
 		collide_with_objects = false,
 	}
@@ -172,8 +183,8 @@ mobs:register_mob("mobs_chaos_npcs:human", {
 	collisionbox = {-0.4, -0.01, -0.4, 0.4, 1.9, 0.4},
 	visual = "mesh",
 	mesh = "character-human.glb",
-	visual_size = {x = 100, y = 100, z = 100},
-	textures = {{"texture_colormap.png"}},
+	visual_size = {x = 6.5, y = 6.5, z = 6.5},
+	textures = {{"colormap.png"}},
 	makes_footstep_sound = true,
 	view_range = 15,
 	walk_velocity = 2,
@@ -181,6 +192,13 @@ mobs:register_mob("mobs_chaos_npcs:human", {
 	damage = 4,
 	reach = 3,
 	attack_type = "dogfight",
+	armor = 100,
+	passive = false,
+	attack_players = false,
+	attack_npcs = true,
+	attack_animals = true,
+	attack_monsters = true,
+	group_attack = true,
 	animation = human_anim,
 
 	water_damage = 1,
@@ -212,8 +230,8 @@ mobs:register_mob("mobs_chaos_npcs:orc", {
 	collisionbox = {-0.4, -0.01, -0.4, 0.4, 1.9, 0.4},
 	visual = "mesh",
 	mesh = "character-orc.glb",
-	visual_size = {x = 100, y = 100, z = 100},
-	textures = {{"texture_colormap.png"}},
+	visual_size = {x = 6.5, y = 6.5, z = 6.5},
+	textures = {{"colormap.png"}},
 	makes_footstep_sound = true,
 	view_range = 15,
 	walk_velocity = 2,
@@ -221,6 +239,13 @@ mobs:register_mob("mobs_chaos_npcs:orc", {
 	damage = 5,
 	reach = 3,
 	attack_type = "dogfight",
+	armor = 100,
+	passive = false,
+	attack_players = true,
+	attack_npcs = true,
+	attack_animals = true,
+	attack_monsters = true,
+	group_attack = true,
 	animation = orc_anim,
 
 	water_damage = 1,
