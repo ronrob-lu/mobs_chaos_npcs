@@ -30,8 +30,16 @@ minetest.register_node("mobs_chaos_npcs:wood_structure", {
 	paramtype = "light",
 	walkable = true,
 	buildable_to = false,
-	inventory_image = "colormap.png",
-	selection_box = {type = "fixed", fixed = {-1.63, -0.5, -1.63, 1.63, 2.5, 1.63}},
+	selection_box = {
+		type = "fixed",
+		fixed = {
+			{-1.63, 1.4, -1.63, 1.63, 2.5, 1.63},
+			{-1.5, -0.5, -1.5, -1.05, 1.4, -1.05},
+			{1.05, -0.5, -1.5, 1.5, 1.4, -1.05},
+			{-1.5, -0.5, 1.05, -1.05, 1.4, 1.5},
+			{1.05, -0.5, 1.05, 1.5, 1.4, 1.5}
+		}
+	},
 	collision_box = {
 		type = "fixed",
 		fixed = {
@@ -47,8 +55,8 @@ minetest.register_node("mobs_chaos_npcs:wood_structure", {
 	on_place = function(itemstack, placer, pointed_thing)
 		if pointed_thing.type ~= "node" then return itemstack end
 		local pos = pointed_thing.above
-		local minp = {x=pos.x-3, y=pos.y-3, z=pos.z-3}
-		local maxp = {x=pos.x+3, y=pos.y+3, z=pos.z+3}
+		local minp = {x=pos.x-2, y=pos.y-2, z=pos.z-2}
+		local maxp = {x=pos.x+2, y=pos.y+2, z=pos.z+2}
 		local overlap = minetest.find_nodes_in_area(minp, maxp, {"mobs_chaos_npcs:wood_structure"})
 		if #overlap > 0 then
 			return itemstack
