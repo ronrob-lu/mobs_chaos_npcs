@@ -82,7 +82,7 @@ minetest.register_node("mobs_chaos_npcs:chaos_chest", {
 	mesh = "chest.glb",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	visual_scale = 3.0,
+	visual_scale = 20.0,
 	walkable = true,
 	buildable_to = false,
 	selection_box = {type = "fixed", fixed = {-1.5, -0.5, -1.5, 1.5, 1.5, 1.5}},
