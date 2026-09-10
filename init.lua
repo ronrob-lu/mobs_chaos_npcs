@@ -139,10 +139,11 @@ local human_anim = {
 	stand_start = 0.200, stand_end = 1.533, stand_speed = 1,
 	walk_start = 1.583, walk_end = 2.250, walk_speed = 1,
 	run_start = 2.300, run_end = 2.800, run_speed = 1,
-	punch_start = 8.033, punch_end = 8.450, punch_speed = 1,
-	die_start = 4.433, die_end = 4.767, die_speed = 1,
-	attack_start = 8.033, attack_end = 8.450, attack_speed = 1,
-	shoot_start = 8.033, shoot_end = 8.450, shoot_speed = 1,
+	jump_start = 2.850, jump_end = 3.350, jump_speed = 1,
+	punch_start = 8.035, punch_end = 8.452, punch_speed = 1,
+	die_start = 4.434, die_end = 4.767, die_speed = 1,
+	attack_start = 8.035, attack_end = 8.452, attack_speed = 1,
+	shoot_start = 7.285, shoot_end = 7.485, shoot_speed = 1,
 	speed_normal = 1, speed_run = 1
 }
 
@@ -150,10 +151,11 @@ local orc_anim = {
 	stand_start = 0.200, stand_end = 1.533, stand_speed = 1,
 	walk_start = 1.583, walk_end = 2.250, walk_speed = 1,
 	run_start = 2.300, run_end = 2.800, run_speed = 1,
-	punch_start = 8.033, punch_end = 8.450, punch_speed = 1,
-	die_start = 4.433, die_end = 4.767, die_speed = 1,
-	attack_start = 8.033, attack_end = 8.450, attack_speed = 1,
-	shoot_start = 8.033, shoot_end = 8.450, shoot_speed = 1,
+	jump_start = 2.850, jump_end = 3.350, jump_speed = 1,
+	punch_start = 8.035, punch_end = 8.452, punch_speed = 1,
+	die_start = 4.434, die_end = 4.767, die_speed = 1,
+	attack_start = 8.035, attack_end = 8.452, attack_speed = 1,
+	shoot_start = 7.285, shoot_end = 7.485, shoot_speed = 1,
 	speed_normal = 1, speed_run = 1
 }
 
@@ -195,7 +197,7 @@ local function attach_random_weapon(self)
 	local choice = weapons[math.random(#weapons)]
 	local weapon = minetest.add_entity(pos, choice)
 	if weapon then
-		weapon:set_attach(self.object, "arm-right", {x=0, y=0, z=0}, {x=0, y=0, z=0})
+		weapon:set_attach(self.object, "arm-right", {x=0, y=2.5, z=1.5}, {x=90, y=0, z=0})
 	end
 end
 
@@ -229,6 +231,12 @@ end
 mobs:register_mob("mobs_chaos_npcs:human", {
 	pathfinding = 1,
 	type = "npc",
+	order = "wander",
+	jump = true,
+	jump_height = 3,
+	stepheight = 1.1,
+	walk_chance = 50,
+	stand_chance = 50,
 	hp_min = 20, hp_max = 30,
 	collisionbox = {-1.2, -0.01, -1.2, 1.2, 5.7, 1.2},
 	visual = "mesh",
@@ -277,6 +285,12 @@ mobs:register_mob("mobs_chaos_npcs:human", {
 mobs:register_mob("mobs_chaos_npcs:orc", {
 	pathfinding = 1,
 	type = "monster",
+	order = "wander",
+	jump = true,
+	jump_height = 3,
+	stepheight = 1.1,
+	walk_chance = 50,
+	stand_chance = 50,
 	hp_min = 25, hp_max = 35,
 	collisionbox = {-1.2, -0.01, -1.2, 1.2, 5.7, 1.2},
 	visual = "mesh",
