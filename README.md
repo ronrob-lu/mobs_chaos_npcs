@@ -1,11 +1,11 @@
 # Mobs Chaos NPCs
 
-A Luanti (Minetest) mod built on the `mobs_redo` API. This mod introduces Humans and Orc factions, interactive Chaos Chests, and physically simulated falling structural blocks.
+A Luanti (Minetest) mod built on the `mobs` API. This mod introduces Humans and Orc factions, interactive Chaos Chests, and physically simulated falling structural blocks.
 
 ## Installation
 
-This mod requires `mobs_redo` as a strict dependency. To install:
-1. Ensure `mobs_redo` is installed and enabled in your world.
+This mod requires `mobs` as a strict dependency. To install:
+1. Ensure `mobs` is installed and enabled in your world.
 2. Clone or place this mod's folder (`mobs_chaos_npcs`) into your Minetest `mods/` directory.
 3. Enable `mobs_chaos_npcs` in your world configuration.
 

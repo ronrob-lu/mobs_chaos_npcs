@@ -9,6 +9,7 @@ local function register_falling_mesh(name, desc, mesh_file)
 		drawtype = "mesh",
 		mesh = mesh_file,
 		paramtype2 = "color",
+		visual_scale = 100.0,
 		palette = "texture_colormap.png",
 		paramtype = "light",
 		groups = {falling_node = 1, oddly_breakable_by_hand = 3},
@@ -38,6 +39,7 @@ minetest.register_node("mobs_chaos_npcs:chaos_chest", {
 	mesh = "chest.glb",
 	paramtype = "light",
 	paramtype2 = "facedir",
+	visual_scale = 100.0,
 	groups = {choppy = 2, oddly_breakable_by_hand = 2},
 	tiles = {"texture_colormap.png"},
 
@@ -53,6 +55,10 @@ minetest.register_node("mobs_chaos_npcs:chaos_chest", {
 		meta:set_string("infotext", "Chaos Chest")
 		local inv = meta:get_inventory()
 		inv:set_size("main", 8*4)
+		inv:add_item("main", "mobs_chaos_npcs:barrel 10")
+		inv:add_item("main", "mobs_chaos_npcs:chair 10")
+		inv:add_item("main", "mobs_chaos_npcs:table 10")
+		inv:add_item("main", "mobs_chaos_npcs:wood_structure 10")
 	end,
 
 	can_dig = function(pos, player)
@@ -88,7 +94,7 @@ local human_anim = {
 	run_start = 2.300, run_end = 2.800,
 	punch_start = 8.035, punch_end = 8.452,
 	die_start = 4.434, die_end = 4.767,
-	speed_normal = 30, speed_run = 30
+	speed_normal = 1, speed_run = 1
 }
 
 local orc_anim = {
@@ -97,7 +103,7 @@ local orc_anim = {
 	run_start = 2.300, run_end = 2.800,
 	punch_start = 8.033, punch_end = 8.450,
 	die_start = 4.433, die_end = 4.767,
-	speed_normal = 30, speed_run = 30
+	speed_normal = 1, speed_run = 1
 }
 
 -- Weapon Entities for Attachment
@@ -106,6 +112,7 @@ minetest.register_entity("mobs_chaos_npcs:weapon_spear", {
 		visual = "mesh",
 		mesh = "weapon-spear.glb",
 		textures = {"texture_colormap.png"},
+		visual_size = {x = 100, y = 100},
 		physical = false,
 		collide_with_objects = false,
 	}
@@ -116,6 +123,7 @@ minetest.register_entity("mobs_chaos_npcs:weapon_sword", {
 		visual = "mesh",
 		mesh = "weapon-sword.glb",
 		textures = {"texture_colormap.png"},
+		visual_size = {x = 100, y = 100},
 		physical = false,
 		collide_with_objects = false,
 	}
@@ -163,6 +171,7 @@ mobs:register_mob("mobs_chaos_npcs:human", {
 	collisionbox = {-0.4, -0.01, -0.4, 0.4, 1.9, 0.4},
 	visual = "mesh",
 	mesh = "character-human.glb",
+	visual_size = {x = 100, y = 100},
 	textures = {{"texture_colormap.png"}},
 	makes_footstep_sound = true,
 	view_range = 15,
@@ -186,6 +195,7 @@ mobs:register_mob("mobs_chaos_npcs:human", {
 	group_attack = true,
 
 	on_spawn = function(self)
+		self.damage = math.random(3, 8)
 		attach_random_weapon(self)
 	end,
 
@@ -201,6 +211,7 @@ mobs:register_mob("mobs_chaos_npcs:orc", {
 	collisionbox = {-0.4, -0.01, -0.4, 0.4, 1.9, 0.4},
 	visual = "mesh",
 	mesh = "character-orc.glb",
+	visual_size = {x = 100, y = 100},
 	textures = {{"texture_colormap.png"}},
 	makes_footstep_sound = true,
 	view_range = 15,
@@ -223,6 +234,7 @@ mobs:register_mob("mobs_chaos_npcs:orc", {
 	group_attack = true,
 
 	on_spawn = function(self)
+		self.damage = math.random(3, 8)
 		attach_random_weapon(self)
 	end,
 
