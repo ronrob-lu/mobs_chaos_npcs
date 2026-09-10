@@ -155,10 +155,14 @@ minetest.register_entity("mobs_chaos_npcs:weapon_spear", {
 		visual = "mesh",
 		mesh = "weapon-spear.glb",
 		textures = {"colormap.png"},
-		visual_size = {x = 20, y = 20, z = 20},
 		physical = false,
 		collide_with_objects = false,
-	}
+	},
+	on_step = function(self, dtime)
+		if not self.object:get_attach() then
+			self.object:remove()
+		end
+	end
 })
 
 minetest.register_entity("mobs_chaos_npcs:weapon_sword", {
@@ -166,10 +170,14 @@ minetest.register_entity("mobs_chaos_npcs:weapon_sword", {
 		visual = "mesh",
 		mesh = "weapon-sword.glb",
 		textures = {"colormap.png"},
-		visual_size = {x = 20, y = 20, z = 20},
 		physical = false,
 		collide_with_objects = false,
-	}
+	},
+	on_step = function(self, dtime)
+		if not self.object:get_attach() then
+			self.object:remove()
+		end
+	end
 })
 
 local function attach_random_weapon(self)
