@@ -8,9 +8,8 @@ local function register_falling_mesh(name, desc, mesh_file)
 		description = desc,
 		drawtype = "mesh",
 		mesh = mesh_file,
-		paramtype2 = "color",
+		paramtype2 = "facedir",
 		visual_scale = 100.0,
-		palette = "texture_colormap.png",
 		paramtype = "light",
 		groups = {falling_node = 1, oddly_breakable_by_hand = 3},
 		tiles = {"texture_colormap.png"}, -- Dummy tile to suppress missing texture warnings, colored by palette
@@ -112,7 +111,7 @@ minetest.register_entity("mobs_chaos_npcs:weapon_spear", {
 		visual = "mesh",
 		mesh = "weapon-spear.glb",
 		textures = {"texture_colormap.png"},
-		visual_size = {x = 100, y = 100},
+		visual_size = {x = 100, y = 100, z = 100},
 		physical = false,
 		collide_with_objects = false,
 	}
@@ -123,7 +122,7 @@ minetest.register_entity("mobs_chaos_npcs:weapon_sword", {
 		visual = "mesh",
 		mesh = "weapon-sword.glb",
 		textures = {"texture_colormap.png"},
-		visual_size = {x = 100, y = 100},
+		visual_size = {x = 100, y = 100, z = 100},
 		physical = false,
 		collide_with_objects = false,
 	}
@@ -145,8 +144,10 @@ local function custom_destructive_step(self, dtime)
 	local pos = self.object:get_pos()
 	if not pos then return false end
 
+	pos = vector.round(pos)
+
 	local radius = 1
-	local minp = {x=pos.x-radius, y=pos.y, z=pos.z-radius}
+	local minp = {x=pos.x-radius, y=pos.y+1, z=pos.z-radius}
 	local maxp = {x=pos.x+radius, y=pos.y+1, z=pos.z+radius}
 
 	for x = minp.x, maxp.x do
@@ -171,7 +172,7 @@ mobs:register_mob("mobs_chaos_npcs:human", {
 	collisionbox = {-0.4, -0.01, -0.4, 0.4, 1.9, 0.4},
 	visual = "mesh",
 	mesh = "character-human.glb",
-	visual_size = {x = 100, y = 100},
+	visual_size = {x = 100, y = 100, z = 100},
 	textures = {{"texture_colormap.png"}},
 	makes_footstep_sound = true,
 	view_range = 15,
@@ -211,7 +212,7 @@ mobs:register_mob("mobs_chaos_npcs:orc", {
 	collisionbox = {-0.4, -0.01, -0.4, 0.4, 1.9, 0.4},
 	visual = "mesh",
 	mesh = "character-orc.glb",
-	visual_size = {x = 100, y = 100},
+	visual_size = {x = 100, y = 100, z = 100},
 	textures = {{"texture_colormap.png"}},
 	makes_footstep_sound = true,
 	view_range = 15,
