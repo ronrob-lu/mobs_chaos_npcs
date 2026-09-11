@@ -204,30 +204,15 @@ local function attach_random_weapon(self)
 	end
 end
 
--- Shared destruction logic
-local function custom_destructive_step(self, dtime)
-	local pos = self.object:get_pos()
-	if not pos then return false end
-
-	pos = vector.round(pos)
-
-	local radius = 1
-	local minp = {x=pos.x-radius, y=pos.y+1, z=pos.z-radius}
-	local maxp = {x=pos.x+radius, y=pos.y+1, z=pos.z+radius}
-
-	for x = minp.x, maxp.x do
-		for y = minp.y, maxp.y do
-			for z = minp.z, maxp.z do
-				local p = {x=x, y=y, z=z}
-				local node = minetest.get_node(p)
-				if node.name ~= "air" and node.name ~= "ignore" then
-					local def = minetest.registered_nodes[node.name]
-					if def and not (def.groups and def.groups.dirt) then
-						-- minetest.dig_node(p)
-					end
-				end
-			end
-		end
+local function is_valid_target(target)
+	if not target or not target:get_pos() then
+		return false
+	end
+	if target:is_player() then
+		return target:get_hp() > 0
+	else
+		local ent = target:get_luaentity()
+		return ent and ent.health and ent.health > 0
 	end
 end
 
@@ -260,6 +245,7 @@ mobs:register_mob("mobs_chaos_npcs:human", {
 	attack_animals = true,
 	attack_monsters = true,
 	group_attack = true,
+	owner_loyal = true,
 	animation = human_anim,
 
 	water_damage = 1,
@@ -268,19 +254,30 @@ mobs:register_mob("mobs_chaos_npcs:human", {
 	floats = 0,
 	air_damage = 1,
 
-	owner_loyal = true,
-	attack_animals = true,
-	attack_monsters = true,
-	attack_npcs = false,
-	group_attack = true,
-
 	on_spawn = function(self)
 		self.damage = math.random(3, 8)
 		attach_random_weapon(self)
 	end,
 
 	do_custom = function(self, dtime)
-		custom_destructive_step(self, dtime)
+		if not is_valid_target(self.attack) then
+			self.attack = nil
+			local pos = self.object:get_pos()
+			if pos then
+				local objects = minetest.get_objects_inside_radius(pos, self.view_range or 15)
+				for _, obj in ipairs(objects) do
+					if not obj:is_player() then
+						local lua_entity = obj:get_luaentity()
+						if lua_entity and lua_entity.name ~= "mobs_chaos_npcs:human" and lua_entity.health and lua_entity.health > 0 then
+							if not lua_entity.name:find("weapon") then
+								self.attack = obj
+								break
+							end
+						end
+					end
+				end
+			end
+		end
 		return false
 	end,
 })
@@ -322,39 +319,35 @@ mobs:register_mob("mobs_chaos_npcs:orc", {
 	floats = 0,
 	air_damage = 1,
 
-	attack_animals = true,
-	attack_monsters = true,
-	attack_npcs = true,
-	group_attack = true,
-
 	on_spawn = function(self)
 		self.damage = math.random(3, 8)
 		attach_random_weapon(self)
 	end,
 
 	do_custom = function(self, dtime)
-		custom_destructive_step(self, dtime)
-
-		-- Custom faction check: friendly only to other orcs, hostile to everything else.
-		local pos = self.object:get_pos()
-		if pos and (not self.attack or not self.attack:get_pos()) then
-			local objects = minetest.get_objects_inside_radius(pos, self.view_range)
-			for _, obj in ipairs(objects) do
-				if obj:is_player() then
-					self.attack = obj
-					break
-				else
-					local lua_entity = obj:get_luaentity()
-					if lua_entity and lua_entity.name ~= "mobs_chaos_npcs:orc" and lua_entity.health then
-						if not lua_entity.name:match("weapon") then
+		if not is_valid_target(self.attack) then
+			self.attack = nil
+			local pos = self.object:get_pos()
+			if pos then
+				local objects = minetest.get_objects_inside_radius(pos, self.view_range or 15)
+				for _, obj in ipairs(objects) do
+					if obj:is_player() then
+						if obj:get_hp() > 0 then
 							self.attack = obj
 							break
+						end
+					else
+						local lua_entity = obj:get_luaentity()
+						if lua_entity and lua_entity.name ~= "mobs_chaos_npcs:orc" and lua_entity.health and lua_entity.health > 0 then
+							if not lua_entity.name:find("weapon") then
+								self.attack = obj
+								break
+							end
 						end
 					end
 				end
 			end
 		end
-
 		return false
 	end,
 })
