@@ -2,141 +2,6 @@
 
 local S = minetest.get_translator("mobs_chaos_npcs")
 
--- Helper function to register falling mesh nodes
-local function register_falling_mesh(name, desc, mesh_file, box)
-	minetest.register_node("mobs_chaos_npcs:" .. name, {
-		description = desc,
-		drawtype = "mesh",
-		mesh = mesh_file,
-		paramtype2 = "facedir",
-		paramtype = "light",
-		walkable = true,
-		buildable_to = false,
-		selection_box = {type = "fixed", fixed = box},
-		collision_box = {type = "fixed", fixed = box},
-		groups = {falling_node = 1, oddly_breakable_by_hand = 3},
-		tiles = {"colormap.png"}, -- Dummy tile to suppress missing texture warnings, colored by palette
-	})
-end
-
-register_falling_mesh("barrel", "Chaos Barrel", "barrel.obj", {-0.78, -0.5, -0.78, 0.78, 0.93, 0.78})
-register_falling_mesh("chair", "Chaos Chair", "chair.obj", {-0.52, -0.5, -0.56, 0.52, 0.93, 0.56})
-register_falling_mesh("table", "Chaos Table", "table.obj", {-1.31, -0.5, -0.98, 1.31, 0.44, 0.98})
-minetest.register_node("mobs_chaos_npcs:wood_structure", {
-	description = "Chaos Wood Structure",
-	drawtype = "mesh",
-	mesh = "wood-structure.obj",
-	paramtype2 = "facedir",
-	paramtype = "light",
-	walkable = true,
-	buildable_to = false,
-	selection_box = {
-		type = "fixed",
-		fixed = {
-			{-1.63, 1.4, -1.63, 1.63, 2.5, 1.63},
-			{-1.5, -0.5, -1.5, -1.05, 1.4, -1.05},
-			{1.05, -0.5, -1.5, 1.5, 1.4, -1.05},
-			{-1.5, -0.5, 1.05, -1.05, 1.4, 1.5},
-			{1.05, -0.5, 1.05, 1.5, 1.4, 1.5}
-		}
-	},
-	collision_box = {
-		type = "fixed",
-		fixed = {
-			{-1.63, 1.4, -1.63, 1.63, 2.5, 1.63},
-			{-1.5, -0.5, -1.5, -1.05, 1.4, -1.05},
-			{1.05, -0.5, -1.5, 1.5, 1.4, -1.05},
-			{-1.5, -0.5, 1.05, -1.05, 1.4, 1.5},
-			{1.05, -0.5, 1.05, 1.5, 1.4, 1.5}
-		}
-	},
-	groups = {falling_node = 1, oddly_breakable_by_hand = 3},
-	tiles = {"colormap.png"},
-	on_place = function(itemstack, placer, pointed_thing)
-		if pointed_thing.type ~= "node" then return itemstack end
-		local pos = pointed_thing.above
-		local minp = {x=pos.x-2, y=pos.y-2, z=pos.z-2}
-		local maxp = {x=pos.x+2, y=pos.y+2, z=pos.z+2}
-		local overlap = minetest.find_nodes_in_area(minp, maxp, {"mobs_chaos_npcs:wood_structure"})
-		if #overlap > 0 then
-			return itemstack
-		end
-		return minetest.item_place(itemstack, placer, pointed_thing)
-	end,
-})
-
--- Chaos Chest implementation
-local function get_chest_formspec(pos)
-	local spos = pos.x .. "," .. pos.y .. "," .. pos.z
-	return "size[8,9]" ..
-		"list[nodemeta:" .. spos .. ";main;0,0.3;8,4;]" ..
-		"list[current_player;main;0,4.85;8,1;]" ..
-		"list[current_player;main;0,6.08;8,3;8]" ..
-		"listring[nodemeta:" .. spos .. ";main]" ..
-		"listring[current_player;main]"
-end
-
-minetest.register_node("mobs_chaos_npcs:chaos_chest", {
-	description = "Chaos Chest",
-	drawtype = "mesh",
-	mesh = "chest.glb",
-	paramtype = "light",
-	paramtype2 = "facedir",
-	walkable = true,
-	buildable_to = false,
-	selection_box = {type = "fixed", fixed = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5}},
-	collision_box = {type = "fixed", fixed = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5}},
-	groups = {choppy = 2, oddly_breakable_by_hand = 2},
-	tiles = {"colormap.png"},
-
-	-- Open/close animation definitions per specification (0.05s buffered)
-	-- chest.glb timings: open = 0.3s, close = 1.0s
-	animation = {
-		open_start = 2, open_end = 11,
-		close_start = 12, close_end = 42,
-	},
-
-	on_construct = function(pos)
-		local meta = minetest.get_meta(pos)
-		meta:set_string("infotext", "Chaos Chest")
-		local inv = meta:get_inventory()
-		inv:set_size("main", 8*4)
-		inv:add_item("main", "mobs_chaos_npcs:barrel 10")
-		inv:add_item("main", "mobs_chaos_npcs:chair 10")
-		inv:add_item("main", "mobs_chaos_npcs:table 10")
-		inv:add_item("main", "mobs_chaos_npcs:wood_structure 10")
-	end,
-
-	can_dig = function(pos, player)
-		local meta = minetest.get_meta(pos)
-		local inv = meta:get_inventory()
-		return inv:is_empty("main")
-	end,
-
-	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
-		minetest.show_formspec(clicker:get_player_name(), "mobs_chaos_npcs:chaos_chest_"..minetest.pos_to_string(pos), get_chest_formspec(pos))
-		minetest.sound_play("default_chest_open", {pos = pos, gain = 0.3, max_hear_distance = 10}, true)
-		if minetest.set_node_animation then
-			minetest.set_node_animation(pos, {range = {x = 2, y = 11}, speed = 30, blend = 0})
-		end
-	end,
-})
-
-minetest.register_on_player_receive_fields(function(player, formname, fields)
-	if formname:sub(1, 28) == "mobs_chaos_npcs:chaos_chest_" then
-		if fields.quit then
-			local pos_str = formname:sub(29)
-			local pos = minetest.string_to_pos(pos_str)
-			if pos then
-				minetest.sound_play("default_chest_close", {pos = pos, gain = 0.3, max_hear_distance = 10}, true)
-				if minetest.set_node_animation then
-					minetest.set_node_animation(pos, {range = {x = 12, y = 42}, speed = 30, blend = 0})
-				end
-			end
-		end
-	end
-end)
-
 -- Animation tables based on the glb timings with 0.05s buffer
 local human_anim = {
 	stand_start = 0.200, stand_end = 1.533, stand_speed = 1,
@@ -193,6 +58,37 @@ minetest.register_entity("mobs_chaos_npcs:weapon_sword", {
 	end
 })
 
+-- Shield Entities for Attachment
+minetest.register_entity("mobs_chaos_npcs:shield_round", {
+	initial_properties = {
+		visual = "mesh",
+		mesh = "shield-round.glb",
+		textures = {"colormap.png"},
+		physical = false,
+		collide_with_objects = false,
+	},
+	on_step = function(self, dtime)
+		if not self.object:get_attach() then
+			self.object:remove()
+		end
+	end
+})
+
+minetest.register_entity("mobs_chaos_npcs:shield_rectangle", {
+	initial_properties = {
+		visual = "mesh",
+		mesh = "shield-rectangle.glb",
+		textures = {"colormap.png"},
+		physical = false,
+		collide_with_objects = false,
+	},
+	on_step = function(self, dtime)
+		if not self.object:get_attach() then
+			self.object:remove()
+		end
+	end
+})
+
 local function attach_random_weapon(self)
 	local pos = self.object:get_pos()
 	if not pos then return end
@@ -201,6 +97,17 @@ local function attach_random_weapon(self)
 	local weapon = minetest.add_entity(pos, choice)
 	if weapon then
 		weapon:set_attach(self.object, "arm-right", {x=0, y=2.5, z=1.5}, {x=90, y=0, z=0})
+	end
+end
+
+local function attach_random_shield(self)
+	local pos = self.object:get_pos()
+	if not pos then return end
+	local shields = {"mobs_chaos_npcs:shield_round", "mobs_chaos_npcs:shield_rectangle"}
+	local choice = shields[math.random(#shields)]
+	local shield = minetest.add_entity(pos, choice)
+	if shield then
+		shield:set_attach(self.object, "arm-left", {x=0, y=2.5, z=1.5}, {x=90, y=0, z=0})
 	end
 end
 
@@ -257,6 +164,9 @@ mobs:register_mob("mobs_chaos_npcs:human", {
 	on_spawn = function(self)
 		self.damage = math.random(3, 8)
 		attach_random_weapon(self)
+		if math.random(1, 2) == 1 then
+			attach_random_shield(self)
+		end
 	end,
 
 	do_custom = function(self, dtime)
@@ -269,7 +179,7 @@ mobs:register_mob("mobs_chaos_npcs:human", {
 					if not obj:is_player() then
 						local lua_entity = obj:get_luaentity()
 						if lua_entity and lua_entity.name ~= "mobs_chaos_npcs:human" and lua_entity.health and lua_entity.health > 0 then
-							if not lua_entity.name:find("weapon") then
+							if not lua_entity.name:find("weapon") and not lua_entity.name:find("shield") then
 								self.attack = obj
 								break
 							end
@@ -322,6 +232,9 @@ mobs:register_mob("mobs_chaos_npcs:orc", {
 	on_spawn = function(self)
 		self.damage = math.random(3, 8)
 		attach_random_weapon(self)
+		if math.random(1, 2) == 1 then
+			attach_random_shield(self)
+		end
 	end,
 
 	do_custom = function(self, dtime)
@@ -339,7 +252,7 @@ mobs:register_mob("mobs_chaos_npcs:orc", {
 					else
 						local lua_entity = obj:get_luaentity()
 						if lua_entity and lua_entity.name ~= "mobs_chaos_npcs:orc" and lua_entity.health and lua_entity.health > 0 then
-							if not lua_entity.name:find("weapon") then
+							if not lua_entity.name:find("weapon") and not lua_entity.name:find("shield") then
 								self.attack = obj
 								break
 							end
