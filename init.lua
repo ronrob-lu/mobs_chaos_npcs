@@ -27,136 +27,6 @@ local orc_anim = {
 	speed_normal = 1, speed_run = 1
 }
 
--- Weapon Entities for Attachment
-minetest.register_entity("mobs_chaos_npcs:weapon_spear", {
-	initial_properties = {
-		visual = "mesh",
-		mesh = "weapon-spear.glb",
-		textures = {"colormap.png"},
-		physical = false,
-		collide_with_objects = false,
-	},
-	on_step = function(self, dtime)
-		self._attach_timer = (self._attach_timer or 0) + dtime
-		if self._attach_timer > 0.5 then
-			if not self.object:get_attach() then
-				self.object:remove()
-			end
-		end
-	end
-})
-
-minetest.register_entity("mobs_chaos_npcs:weapon_sword", {
-	initial_properties = {
-		visual = "mesh",
-		mesh = "weapon-sword.glb",
-		textures = {"colormap.png"},
-		physical = false,
-		collide_with_objects = false,
-	},
-	on_step = function(self, dtime)
-		self._attach_timer = (self._attach_timer or 0) + dtime
-		if self._attach_timer > 0.5 then
-			if not self.object:get_attach() then
-				self.object:remove()
-			end
-		end
-	end
-})
-
--- Shield Entities for Attachment
-minetest.register_entity("mobs_chaos_npcs:shield_round", {
-	initial_properties = {
-		visual = "mesh",
-		mesh = "shield-round.glb",
-		textures = {"colormap.png"},
-		physical = false,
-		collide_with_objects = false,
-	},
-	on_step = function(self, dtime)
-		self._attach_timer = (self._attach_timer or 0) + dtime
-		if self._attach_timer > 0.5 then
-			if not self.object:get_attach() then
-				self.object:remove()
-			end
-		end
-	end
-})
-
-minetest.register_entity("mobs_chaos_npcs:shield_rectangle", {
-	initial_properties = {
-		visual = "mesh",
-		mesh = "shield-rectangle.glb",
-		textures = {"colormap.png"},
-		physical = false,
-		collide_with_objects = false,
-	},
-	on_step = function(self, dtime)
-		self._attach_timer = (self._attach_timer or 0) + dtime
-		if self._attach_timer > 0.5 then
-			if not self.object:get_attach() then
-				self.object:remove()
-			end
-		end
-	end
-})
-
-local function ensure_attachments(self)
-	if not self.object or not self.object:get_pos() then return end
-
-	if not self._weapon_type then
-		local weapons = {"mobs_chaos_npcs:weapon_sword", "mobs_chaos_npcs:weapon_spear"}
-		self._weapon_type = weapons[math.random(#weapons)]
-	end
-
-	if self._shield_type == nil then
-		if math.random(1, 2) == 1 then
-			local shields = {"mobs_chaos_npcs:shield_round", "mobs_chaos_npcs:shield_rectangle"}
-			self._shield_type = shields[math.random(#shields)]
-		else
-			self._shield_type = false
-		end
-	end
-
-	if self._weapon_type then
-		local has_weapon = false
-		if self._weapon_ent and self._weapon_ent:get_pos() then
-			local parent = self._weapon_ent:get_attach()
-			if parent and parent == self.object then
-				has_weapon = true
-			end
-		end
-
-		if not has_weapon then
-			local pos = self.object:get_pos()
-			local weapon = minetest.add_entity(pos, self._weapon_type)
-			if weapon then
-				weapon:set_attach(self.object, "arm-right", {x=0, y=-1.8, z=0.5}, {x=90, y=0, z=0})
-				self._weapon_ent = weapon
-			end
-		end
-	end
-
-	if self._shield_type then
-		local has_shield = false
-		if self._shield_ent and self._shield_ent:get_pos() then
-			local parent = self._shield_ent:get_attach()
-			if parent and parent == self.object then
-				has_shield = true
-			end
-		end
-
-		if not has_shield then
-			local pos = self.object:get_pos()
-			local shield = minetest.add_entity(pos, self._shield_type)
-			if shield then
-				shield:set_attach(self.object, "arm-left", {x=0, y=-1.8, z=0.5}, {x=90, y=0, z=0})
-				self._shield_ent = shield
-			end
-		end
-	end
-end
-
 local function is_valid_target(target)
 	if not target or not target:get_pos() then
 		return false
@@ -187,6 +57,7 @@ mobs:register_mob("mobs_chaos_npcs:human", {
 	mesh = "character-human.glb",
 	visual_size = {x = 20, y = 20, z = 20},
 	textures = {{"colormap.png"}},
+	rotate = 180,
 	makes_footstep_sound = true,
 	view_range = 15,
 	walk_velocity = 2,
@@ -209,10 +80,6 @@ mobs:register_mob("mobs_chaos_npcs:human", {
 	can_swim = false,
 	floats = 0,
 	air_damage = 1,
-
-	do_custom = function(self, dtime)
-		ensure_attachments(self)
-	end,
 })
 
 mobs:register_mob("mobs_chaos_npcs:orc", {
@@ -231,6 +98,7 @@ mobs:register_mob("mobs_chaos_npcs:orc", {
 	mesh = "character-orc.glb",
 	visual_size = {x = 20, y = 20, z = 20},
 	textures = {{"colormap.png"}},
+	rotate = 180,
 	makes_footstep_sound = true,
 	view_range = 15,
 	walk_velocity = 2,
@@ -252,10 +120,6 @@ mobs:register_mob("mobs_chaos_npcs:orc", {
 	can_swim = false,
 	floats = 0,
 	air_damage = 1,
-
-	do_custom = function(self, dtime)
-		ensure_attachments(self)
-	end,
 })
 
 -- Spawning
