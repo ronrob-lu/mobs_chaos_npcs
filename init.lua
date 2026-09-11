@@ -96,7 +96,7 @@ local function attach_random_weapon(self)
 	local choice = weapons[math.random(#weapons)]
 	local weapon = minetest.add_entity(pos, choice)
 	if weapon then
-		weapon:set_attach(self.object, "arm-right", {x=0, y=2.5, z=1.5}, {x=90, y=0, z=0})
+		weapon:set_attach(self.object, "arm-right", {x=0, y=-1.8, z=0.5}, {x=90, y=0, z=0})
 	end
 end
 
@@ -107,7 +107,7 @@ local function attach_random_shield(self)
 	local choice = shields[math.random(#shields)]
 	local shield = minetest.add_entity(pos, choice)
 	if shield then
-		shield:set_attach(self.object, "arm-left", {x=0, y=2.5, z=1.5}, {x=90, y=0, z=0})
+		shield:set_attach(self.object, "arm-left", {x=0, y=-1.8, z=0.5}, {x=90, y=0, z=0})
 	end
 end
 
@@ -130,10 +130,10 @@ mobs:register_mob("mobs_chaos_npcs:human", {
 	jump = true,
 	jump_height = 3,
 	stepheight = 1.1,
-	walk_chance = 50,
-	stand_chance = 50,
+	walk_chance = 70,
+	stand_chance = 30,
 	hp_min = 20, hp_max = 30,
-	collisionbox = {-1.2, -0.01, -1.2, 1.2, 5.7, 1.2},
+	collisionbox = {-0.35, 0.0, -0.35, 0.35, 1.8, 0.35},
 	visual = "mesh",
 	mesh = "character-human.glb",
 	visual_size = {x = 20, y = 20, z = 20},
@@ -199,10 +199,10 @@ mobs:register_mob("mobs_chaos_npcs:orc", {
 	jump = true,
 	jump_height = 3,
 	stepheight = 1.1,
-	walk_chance = 50,
-	stand_chance = 50,
+	walk_chance = 70,
+	stand_chance = 30,
 	hp_min = 25, hp_max = 35,
-	collisionbox = {-1.2, -0.01, -1.2, 1.2, 5.7, 1.2},
+	collisionbox = {-0.35, 0.0, -0.35, 0.35, 1.8, 0.35},
 	visual = "mesh",
 	mesh = "character-orc.glb",
 	visual_size = {x = 20, y = 20, z = 20},
