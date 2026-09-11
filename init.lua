@@ -89,25 +89,59 @@ minetest.register_entity("mobs_chaos_npcs:shield_rectangle", {
 	end
 })
 
-local function attach_random_weapon(self)
-	local pos = self.object:get_pos()
-	if not pos then return end
-	local weapons = {"mobs_chaos_npcs:weapon_sword", "mobs_chaos_npcs:weapon_spear"}
-	local choice = weapons[math.random(#weapons)]
-	local weapon = minetest.add_entity(pos, choice)
-	if weapon then
-		weapon:set_attach(self.object, "arm-right", {x=0, y=-1.8, z=0.5}, {x=90, y=0, z=0})
-	end
-end
+local function ensure_attachments(self)
+	if not self.object or not self.object:get_pos() then return end
 
-local function attach_random_shield(self)
-	local pos = self.object:get_pos()
-	if not pos then return end
-	local shields = {"mobs_chaos_npcs:shield_round", "mobs_chaos_npcs:shield_rectangle"}
-	local choice = shields[math.random(#shields)]
-	local shield = minetest.add_entity(pos, choice)
-	if shield then
-		shield:set_attach(self.object, "arm-left", {x=0, y=-1.8, z=0.5}, {x=90, y=0, z=0})
+	if not self._weapon_type then
+		local weapons = {"mobs_chaos_npcs:weapon_sword", "mobs_chaos_npcs:weapon_spear"}
+		self._weapon_type = weapons[math.random(#weapons)]
+	end
+
+	if self._shield_type == nil then
+		if math.random(1, 2) == 1 then
+			local shields = {"mobs_chaos_npcs:shield_round", "mobs_chaos_npcs:shield_rectangle"}
+			self._shield_type = shields[math.random(#shields)]
+		else
+			self._shield_type = false
+		end
+	end
+
+	if self._weapon_type then
+		local has_weapon = false
+		if self._weapon_ent and self._weapon_ent:get_pos() then
+			local parent = self._weapon_ent:get_attach()
+			if parent and parent == self.object then
+				has_weapon = true
+			end
+		end
+
+		if not has_weapon then
+			local pos = self.object:get_pos()
+			local weapon = minetest.add_entity(pos, self._weapon_type)
+			if weapon then
+				weapon:set_attach(self.object, "arm-right", {x=0, y=-1.8, z=0.5}, {x=90, y=0, z=0})
+				self._weapon_ent = weapon
+			end
+		end
+	end
+
+	if self._shield_type then
+		local has_shield = false
+		if self._shield_ent and self._shield_ent:get_pos() then
+			local parent = self._shield_ent:get_attach()
+			if parent and parent == self.object then
+				has_shield = true
+			end
+		end
+
+		if not has_shield then
+			local pos = self.object:get_pos()
+			local shield = minetest.add_entity(pos, self._shield_type)
+			if shield then
+				shield:set_attach(self.object, "arm-left", {x=0, y=-1.8, z=0.5}, {x=90, y=0, z=0})
+				self._shield_ent = shield
+			end
+		end
 	end
 end
 
@@ -119,12 +153,15 @@ local function is_valid_target(target)
 		return target:get_hp() > 0
 	else
 		local ent = target:get_luaentity()
-		return ent and ent.health and ent.health > 0
+		if not ent then return false end
+		local hp = ent.health or (ent.object and ent.object:get_hp()) or 0
+		return hp > 0
 	end
 end
 
 mobs:register_mob("mobs_chaos_npcs:human", {
 	pathfinding = 1,
+	lifetimer = 0,
 	type = "npc",
 	order = "wander",
 	jump = true,
@@ -161,32 +198,29 @@ mobs:register_mob("mobs_chaos_npcs:human", {
 	floats = 0,
 	air_damage = 1,
 
-	on_spawn = function(self)
-		self.damage = math.random(3, 8)
-		attach_random_weapon(self)
-		if math.random(1, 2) == 1 then
-			attach_random_shield(self)
-		end
-	end,
-
 	do_custom = function(self, dtime)
+		ensure_attachments(self)
 		if not is_valid_target(self.attack) then
 			self.attack = nil
 			local pos = self.object:get_pos()
 			if pos then
+				pos = vector.round(pos)
 				local objects = minetest.get_objects_inside_radius(pos, self.view_range or 15)
 				for _, obj in ipairs(objects) do
 					if not obj:is_player() then
 						local lua_entity = obj:get_luaentity()
-						if lua_entity and lua_entity.name ~= "mobs_chaos_npcs:human" and lua_entity.health and lua_entity.health > 0 then
+						if lua_entity and lua_entity.name ~= "mobs_chaos_npcs:human" and is_valid_target(obj) then
 							if not lua_entity.name:find("weapon") and not lua_entity.name:find("shield") then
 								self.attack = obj
+								self.state = "attack"
 								break
 							end
 						end
 					end
 				end
 			end
+		else
+			self.state = "attack"
 		end
 		return false
 	end,
@@ -194,6 +228,7 @@ mobs:register_mob("mobs_chaos_npcs:human", {
 
 mobs:register_mob("mobs_chaos_npcs:orc", {
 	pathfinding = 1,
+	lifetimer = 0,
 	type = "monster",
 	order = "wander",
 	jump = true,
@@ -229,37 +264,35 @@ mobs:register_mob("mobs_chaos_npcs:orc", {
 	floats = 0,
 	air_damage = 1,
 
-	on_spawn = function(self)
-		self.damage = math.random(3, 8)
-		attach_random_weapon(self)
-		if math.random(1, 2) == 1 then
-			attach_random_shield(self)
-		end
-	end,
-
 	do_custom = function(self, dtime)
+		ensure_attachments(self)
 		if not is_valid_target(self.attack) then
 			self.attack = nil
 			local pos = self.object:get_pos()
 			if pos then
+				pos = vector.round(pos)
 				local objects = minetest.get_objects_inside_radius(pos, self.view_range or 15)
 				for _, obj in ipairs(objects) do
 					if obj:is_player() then
 						if obj:get_hp() > 0 then
 							self.attack = obj
+							self.state = "attack"
 							break
 						end
 					else
 						local lua_entity = obj:get_luaentity()
-						if lua_entity and lua_entity.name ~= "mobs_chaos_npcs:orc" and lua_entity.health and lua_entity.health > 0 then
+						if lua_entity and lua_entity.name ~= "mobs_chaos_npcs:orc" and is_valid_target(obj) then
 							if not lua_entity.name:find("weapon") and not lua_entity.name:find("shield") then
 								self.attack = obj
+								self.state = "attack"
 								break
 							end
 						end
 					end
 				end
 			end
+		else
+			self.state = "attack"
 		end
 		return false
 	end,
