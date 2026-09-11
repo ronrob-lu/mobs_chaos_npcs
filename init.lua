@@ -37,8 +37,11 @@ minetest.register_entity("mobs_chaos_npcs:weapon_spear", {
 		collide_with_objects = false,
 	},
 	on_step = function(self, dtime)
-		if not self.object:get_attach() then
-			self.object:remove()
+		self._attach_timer = (self._attach_timer or 0) + dtime
+		if self._attach_timer > 0.5 then
+			if not self.object:get_attach() then
+				self.object:remove()
+			end
 		end
 	end
 })
@@ -52,8 +55,11 @@ minetest.register_entity("mobs_chaos_npcs:weapon_sword", {
 		collide_with_objects = false,
 	},
 	on_step = function(self, dtime)
-		if not self.object:get_attach() then
-			self.object:remove()
+		self._attach_timer = (self._attach_timer or 0) + dtime
+		if self._attach_timer > 0.5 then
+			if not self.object:get_attach() then
+				self.object:remove()
+			end
 		end
 	end
 })
@@ -68,8 +74,11 @@ minetest.register_entity("mobs_chaos_npcs:shield_round", {
 		collide_with_objects = false,
 	},
 	on_step = function(self, dtime)
-		if not self.object:get_attach() then
-			self.object:remove()
+		self._attach_timer = (self._attach_timer or 0) + dtime
+		if self._attach_timer > 0.5 then
+			if not self.object:get_attach() then
+				self.object:remove()
+			end
 		end
 	end
 })
@@ -83,8 +92,11 @@ minetest.register_entity("mobs_chaos_npcs:shield_rectangle", {
 		collide_with_objects = false,
 	},
 	on_step = function(self, dtime)
-		if not self.object:get_attach() then
-			self.object:remove()
+		self._attach_timer = (self._attach_timer or 0) + dtime
+		if self._attach_timer > 0.5 then
+			if not self.object:get_attach() then
+				self.object:remove()
+			end
 		end
 	end
 })
@@ -200,29 +212,6 @@ mobs:register_mob("mobs_chaos_npcs:human", {
 
 	do_custom = function(self, dtime)
 		ensure_attachments(self)
-		if not is_valid_target(self.attack) then
-			self.attack = nil
-			local pos = self.object:get_pos()
-			if pos then
-				pos = vector.round(pos)
-				local objects = minetest.get_objects_inside_radius(pos, self.view_range or 15)
-				for _, obj in ipairs(objects) do
-					if not obj:is_player() then
-						local lua_entity = obj:get_luaentity()
-						if lua_entity and lua_entity.name ~= "mobs_chaos_npcs:human" and is_valid_target(obj) then
-							if not lua_entity.name:find("weapon") and not lua_entity.name:find("shield") then
-								self.attack = obj
-								self.state = "attack"
-								break
-							end
-						end
-					end
-				end
-			end
-		else
-			self.state = "attack"
-		end
-		return false
 	end,
 })
 
@@ -266,35 +255,6 @@ mobs:register_mob("mobs_chaos_npcs:orc", {
 
 	do_custom = function(self, dtime)
 		ensure_attachments(self)
-		if not is_valid_target(self.attack) then
-			self.attack = nil
-			local pos = self.object:get_pos()
-			if pos then
-				pos = vector.round(pos)
-				local objects = minetest.get_objects_inside_radius(pos, self.view_range or 15)
-				for _, obj in ipairs(objects) do
-					if obj:is_player() then
-						if obj:get_hp() > 0 then
-							self.attack = obj
-							self.state = "attack"
-							break
-						end
-					else
-						local lua_entity = obj:get_luaentity()
-						if lua_entity and lua_entity.name ~= "mobs_chaos_npcs:orc" and is_valid_target(obj) then
-							if not lua_entity.name:find("weapon") and not lua_entity.name:find("shield") then
-								self.attack = obj
-								self.state = "attack"
-								break
-							end
-						end
-					end
-				end
-			end
-		else
-			self.state = "attack"
-		end
-		return false
 	end,
 })
 
