@@ -8,10 +8,10 @@ local human_anim = {
 	walk_start = 1.583, walk_end = 2.250, walk_speed = 1,
 	run_start = 2.300, run_end = 2.800, run_speed = 1,
 	jump_start = 2.850, jump_end = 3.350, jump_speed = 1,
-	punch_start = 8.035, punch_end = 8.452, punch_speed = 1,
-	die_start = 4.434, die_end = 4.767, die_speed = 1,
-	attack_start = 8.035, attack_end = 8.452, attack_speed = 1,
-	shoot_start = 7.285, shoot_end = 7.485, shoot_speed = 1,
+	punch_start = 8.085, punch_end = 8.402, punch_speed = 1,
+	die_start = 4.484, die_end = 4.717, die_speed = 1,
+	attack_start = 8.085, attack_end = 8.402, attack_speed = 1,
+	shoot_start = 7.335, shoot_end = 7.435, shoot_speed = 1,
 	speed_normal = 1, speed_run = 1
 }
 
@@ -20,10 +20,10 @@ local orc_anim = {
 	walk_start = 1.583, walk_end = 2.250, walk_speed = 1,
 	run_start = 2.300, run_end = 2.800, run_speed = 1,
 	jump_start = 2.850, jump_end = 3.350, jump_speed = 1,
-	punch_start = 8.035, punch_end = 8.452, punch_speed = 1,
-	die_start = 4.434, die_end = 4.767, die_speed = 1,
-	attack_start = 8.035, attack_end = 8.452, attack_speed = 1,
-	shoot_start = 7.285, shoot_end = 7.485, shoot_speed = 1,
+	punch_start = 8.085, punch_end = 8.402, punch_speed = 1,
+	die_start = 4.484, die_end = 4.717, die_speed = 1,
+	attack_start = 8.085, attack_end = 8.402, attack_speed = 1,
+	shoot_start = 7.335, shoot_end = 7.435, shoot_speed = 1,
 	speed_normal = 1, speed_run = 1
 }
 
