@@ -1,0 +1,22 @@
+ANIMATION FIXING & DESPAWNING GUIDE
+
+If you notice attached weapon/shield entities despawning randomly, it is due to a known limitation in Luanti/Minetest where attached entities created via `minetest.add_entity()` do not persist across chunk unloads or server reloads in `mobs_redo`.
+
+For this reason, it is preferred to rely on built-in fight animations from character GLB models rather than attaching separate weapon/shield entities, as handheld items are often not clearly visible anyway.
+
+HOW TO FIX ANIMATIONS YOURSELF IN CODE:
+
+When defining animations for the `mobs_redo` API using `.glb` timeline values (in seconds):
+
+1. **Inward Padding Buffer:**
+   Luanti animations for `.glb` models require a single, continuous timeline in seconds. When mapping these sequential segments to specific actions in `mobs_redo`, an inward padding buffer of 0.05 seconds MUST be applied to both the start and end values.
+   Example: `start_time + 0.05`, `end_time - 0.05`.
+   This prevents adjacent animation frames from bleeding into each other.
+
+2. **Speed Normalization:**
+   Explicitly set all animation speeds (e.g., `stand_speed = 1`, `walk_speed = 1`, `speed_normal = 1`) to `1` in the animation table. This prevents `mobs_redo` from defaulting to high-speed playback (e.g., 15x).
+
+3. **Melee Attacks:**
+   Melee attack animations must be defined using the `punch_start` and `punch_end` variables in the animation table. `attack_start` and `attack_end` are not standard defaults for physical attacks in `mobs_redo`.
+
+By following these rules, your built-in mob animations will function smoothly without requiring buggy attached entities!
