@@ -42,10 +42,11 @@ local function npc_do_custom(self, dtime)
 							local is_stone = minetest.get_item_group(node.name, "stone") > 0
 							local is_steel = string.find(node.name, "steel") ~= nil
 							local is_immortal = minetest.get_item_group(node.name, "immortal") > 0
+							local is_xpanes = string.find(node.name, "xpanes") ~= nil
 							local nodedef = minetest.registered_nodes[node.name]
 							local is_liquid = nodedef and (nodedef.liquidtype ~= "none")
 
-							if not is_stone and not is_steel and not is_immortal and not is_liquid then
+							if not is_stone and not is_steel and not is_immortal and not is_xpanes and not is_liquid then
 								minetest.remove_node(p)
 							end
 						end
