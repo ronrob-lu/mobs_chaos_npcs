@@ -2,6 +2,25 @@
 
 local S = minetest.get_translator("mobs_chaos_npcs")
 
+local orcs_destroy = false
+
+minetest.register_chatcommand("orcs_destroy", {
+	params = "<on|off>",
+	description = "Toggle whether orcs can destroy blocks",
+	privs = {server = true},
+	func = function(name, param)
+		if param == "on" then
+			orcs_destroy = true
+			return true, "Orc block destruction enabled."
+		elseif param == "off" then
+			orcs_destroy = false
+			return true, "Orc block destruction disabled."
+		else
+			return false, "Invalid parameter. Usage: /orcs_destroy on|off"
+		end
+	end,
+})
+
 -- Animation tables based on the glb timings with 0.05s buffer
 local human_anim = {
 	stand_start = 0.150, stand_end = 1.383, stand_speed = 1,
@@ -28,6 +47,10 @@ local orc_anim = {
 }
 
 local function npc_do_custom(self, dtime)
+	if self.name == "mobs_chaos_npcs:orc" and not orcs_destroy then
+		return nil
+	end
+
 	self.destroy_timer = (self.destroy_timer or 0) + dtime
 	if self.destroy_timer >= 1.0 then
 		self.destroy_timer = 0
