@@ -77,6 +77,7 @@ mobs:register_mob("mobs_chaos_npcs:human", {
 
 	water_damage = 1,
 	lava_damage = 5,
+	fall_damage = 1,
 	can_swim = false,
 	floats = 0,
 	air_damage = 1,
@@ -117,6 +118,7 @@ mobs:register_mob("mobs_chaos_npcs:orc", {
 
 	water_damage = 1,
 	lava_damage = 5,
+	fall_damage = 1,
 	can_swim = false,
 	floats = 0,
 	air_damage = 1,
@@ -128,8 +130,8 @@ mobs:spawn({
 	nodes = {"group:soil", "group:stone"},
 	min_light = 0,
 	max_light = 15,
-	chance = 7000,
-	active_object_count = 3,
+	chance = 1000,
+	active_object_count = 10,
 	min_height = 0,
 })
 
@@ -138,8 +140,8 @@ mobs:spawn({
 	nodes = {"group:soil", "group:stone"},
 	min_light = 0,
 	max_light = 15,
-	chance = 7000,
-	active_object_count = 3,
+	chance = 1000,
+	active_object_count = 10,
 	min_height = 0,
 })
 
