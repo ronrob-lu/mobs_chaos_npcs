@@ -2,9 +2,9 @@ def print_anims(anims, padding=0.05):
     curr = 0.0
     for name, dur in anims:
         start = curr + padding
-        end = start + dur
+        end = curr + dur - padding
         print(f"  {name.replace('-', '_')} = {{x = {start:.3f}, y = {end:.3f}}},")
-        curr = end
+        curr += dur
 
 print("Humans:")
 human_anims = [

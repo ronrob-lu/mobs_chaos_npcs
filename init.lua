@@ -4,26 +4,26 @@ local S = minetest.get_translator("mobs_chaos_npcs")
 
 -- Animation tables based on the glb timings with 0.05s buffer
 local human_anim = {
-	stand_start = 0.200, stand_end = 1.533, stand_speed = 1,
-	walk_start = 1.583, walk_end = 2.250, walk_speed = 1,
-	run_start = 2.300, run_end = 2.800, run_speed = 1,
-	jump_start = 2.850, jump_end = 3.350, jump_speed = 1,
-	punch_start = 8.085, punch_end = 8.402, punch_speed = 1,
-	die_start = 4.484, die_end = 4.717, die_speed = 1,
-	attack_start = 8.085, attack_end = 8.402, attack_speed = 1,
-	shoot_start = 7.335, shoot_end = 7.435, shoot_speed = 1,
+	stand_start = 0.150, stand_end = 1.383, stand_speed = 1,
+	walk_start = 1.483, walk_end = 2.050, walk_speed = 1,
+	run_start = 2.150, run_end = 2.550, run_speed = 1,
+	jump_start = 2.650, jump_end = 3.050, jump_speed = 1,
+	punch_start = 7.085, punch_end = 7.402, punch_speed = 1,
+	die_start = 3.984, die_end = 4.217, die_speed = 1,
+	attack_start = 7.085, attack_end = 7.402, attack_speed = 1,
+	shoot_start = 6.485, shoot_end = 6.585, shoot_speed = 1,
 	speed_normal = 1, speed_run = 1
 }
 
 local orc_anim = {
-	stand_start = 0.200, stand_end = 1.533, stand_speed = 1,
-	walk_start = 1.583, walk_end = 2.250, walk_speed = 1,
-	run_start = 2.300, run_end = 2.800, run_speed = 1,
-	jump_start = 2.850, jump_end = 3.350, jump_speed = 1,
-	punch_start = 8.085, punch_end = 8.402, punch_speed = 1,
-	die_start = 4.484, die_end = 4.717, die_speed = 1,
-	attack_start = 8.085, attack_end = 8.402, attack_speed = 1,
-	shoot_start = 7.335, shoot_end = 7.435, shoot_speed = 1,
+	stand_start = 0.150, stand_end = 1.383, stand_speed = 1,
+	walk_start = 1.483, walk_end = 2.050, walk_speed = 1,
+	run_start = 2.150, run_end = 2.550, run_speed = 1,
+	jump_start = 2.650, jump_end = 3.050, jump_speed = 1,
+	punch_start = 7.085, punch_end = 7.402, punch_speed = 1,
+	die_start = 3.984, die_end = 4.217, die_speed = 1,
+	attack_start = 7.085, attack_end = 7.402, attack_speed = 1,
+	shoot_start = 6.485, shoot_end = 6.585, shoot_speed = 1,
 	speed_normal = 1, speed_run = 1
 }
 
