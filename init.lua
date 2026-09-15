@@ -175,6 +175,24 @@ mobs:spawn({
 	chance = 1000,
 	active_object_count = 10,
 	min_height = 0,
+	on_spawn = function(self, pos)
+		local nods = minetest.find_nodes_in_area_under_air(
+			{x = pos.x - 4, y = pos.y - 3, z = pos.z - 4},
+			{x = pos.x + 4, y = pos.y + 3, z = pos.z + 4},
+			{"group:soil", "group:stone"}
+		)
+
+		if nods and #nods > 0 then
+			local iter = math.min(#nods, math.random(1, 3))
+			for n = 1, iter do
+				local pos2 = nods[math.random(#nods)]
+				pos2.y = pos2.y + 2
+				if minetest.get_node(pos2).name == "air" then
+					minetest.add_entity(pos2, "mobs_chaos_npcs:orc")
+				end
+			end
+		end
+	end,
 })
 
 -- Spawn Eggs
