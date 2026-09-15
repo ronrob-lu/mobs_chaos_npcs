@@ -184,10 +184,37 @@ mobs:register_mob("mobs_chaos_npcs:orc", {
 	blood_texture = "",
 })
 
+minetest.register_node("mobs_chaos_npcs:human_spawner", {
+	description = "Human Spawner",
+	tiles = {
+		"spawner_bottom_top.png",
+		"spawner_bottom_top.png",
+		"human_spawner-side.png",
+		"human_spawner-side.png",
+		"human_spawner-side.png",
+		"human_spawner-side.png",
+	},
+	groups = {cracky = 1},
+})
+
+minetest.register_node("mobs_chaos_npcs:orc_spawner", {
+	description = "Orc Spawner",
+	tiles = {
+		"spawner_bottom_top.png",
+		"spawner_bottom_top.png",
+		"orc_spawner_side.png",
+		"orc_spawner_side.png",
+		"orc_spawner_side.png",
+		"orc_spawner_side.png",
+	},
+	groups = {cracky = 1},
+})
+
 -- Spawning
 mobs:spawn({
 	name = "mobs_chaos_npcs:human",
 	nodes = {"group:soil", "group:stone"},
+	neighbors = {"mobs_chaos_npcs:human_spawner"},
 	min_light = 0,
 	max_light = 15,
 	chance = 1000,
@@ -198,6 +225,7 @@ mobs:spawn({
 mobs:spawn({
 	name = "mobs_chaos_npcs:orc",
 	nodes = {"group:soil", "group:stone"},
+	neighbors = {"mobs_chaos_npcs:orc_spawner"},
 	min_light = 0,
 	max_light = 15,
 	chance = 1000,
