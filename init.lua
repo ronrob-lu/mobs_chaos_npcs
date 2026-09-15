@@ -46,11 +46,11 @@ local orc_anim = {
 	speed_normal = 1, speed_run = 1
 }
 
-local function npc_do_custom(self, dtime)
-	if self.name == "mobs_chaos_npcs:orc" and not orcs_destroy then
+
+local function orc_do_custom(self, dtime)
+  if self.name == "mobs_chaos_npcs:orc" and not orcs_destroy then
 		return nil
 	end
-
 	self.destroy_timer = (self.destroy_timer or 0) + dtime
 	if self.destroy_timer >= 1.0 then
 		self.destroy_timer = 0
@@ -97,7 +97,6 @@ local function is_valid_target(target)
 end
 
 mobs:register_mob("mobs_chaos_npcs:human", {
-	do_custom = npc_do_custom,
 	pathfinding = 1,
 	lifetimer = 0,
 	type = "npc",
@@ -142,7 +141,7 @@ mobs:register_mob("mobs_chaos_npcs:human", {
 })
 
 mobs:register_mob("mobs_chaos_npcs:orc", {
-	do_custom = npc_do_custom,
+	do_custom = orc_do_custom,
 	pathfinding = 1,
 	lifetimer = 0,
 	type = "monster",
