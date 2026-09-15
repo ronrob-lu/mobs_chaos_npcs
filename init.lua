@@ -43,6 +43,7 @@ local function npc_do_custom(self, dtime)
 							local is_steel = string.find(node.name, "steel") ~= nil
 							local is_xpanes = string.find(node.name, "xpanes") ~= nil
 							local is_immortal = minetest.get_item_group(node.name, "immortal") > 0
+							local is_xpanes = string.find(node.name, "xpanes") ~= nil
 							local nodedef = minetest.registered_nodes[node.name]
 							local is_liquid = nodedef and (nodedef.liquidtype ~= "none")
 
