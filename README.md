@@ -1,6 +1,8 @@
 # Mobs Chaos NPCs
 
-A Luanti (Minetest) mod built on the `mobs` API. This mod introduces Human and Orc NPC factions equipped with weapons and shields.
+A Luanti (Minetest) mod built on the `mobs` API. This mod introduces Human and Orc NPC factions.
+
+> **Note on Github:** This is still in development, playable but its not really clear where it leads to... there is no roadmap...
 
 ## Installation
 
@@ -13,7 +15,6 @@ This mod requires `mobs` as a strict dependency. To install:
 
 - **Human Faction**: Friendly toward players and other Humans. They will aggressively attack non-humans.
 - **Orc Faction**: Hostile to players, Humans, and other non-orc mobs. Only friendly to other Orcs.
-- **Equipment**: NPCs dynamically equip swords or spears in their right hand, and optionally round or rectangular shields in their left hand.
 
 ## Usage Guide
 
