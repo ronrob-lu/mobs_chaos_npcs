@@ -27,6 +27,36 @@ local orc_anim = {
 	speed_normal = 1, speed_run = 1
 }
 
+local function npc_do_custom(self, dtime)
+	self.destroy_timer = (self.destroy_timer or 0) + dtime
+	if self.destroy_timer >= 1.0 then
+		self.destroy_timer = 0
+		local pos = vector.round(self.object:get_pos())
+		for dx = -1, 1 do
+			for dz = -1, 1 do
+				if dx ~= 0 or dz ~= 0 then
+					for dy = 0, 1 do
+						local p = {x = pos.x + dx, y = pos.y + dy, z = pos.z + dz}
+						local node = minetest.get_node(p)
+						if node.name ~= "air" and node.name ~= "ignore" then
+							local is_stone = minetest.get_item_group(node.name, "stone") > 0
+							local is_steel = string.find(node.name, "steel") ~= nil
+							local is_immortal = minetest.get_item_group(node.name, "immortal") > 0
+							local nodedef = minetest.registered_nodes[node.name]
+							local is_liquid = nodedef and (nodedef.liquidtype ~= "none")
+
+							if not is_stone and not is_steel and not is_immortal and not is_liquid then
+								minetest.remove_node(p)
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+	return nil
+end
+
 local function is_valid_target(target)
 	if not target or not target:get_pos() then
 		return false
@@ -42,6 +72,7 @@ local function is_valid_target(target)
 end
 
 mobs:register_mob("mobs_chaos_npcs:human", {
+	do_custom = npc_do_custom,
 	pathfinding = 1,
 	lifetimer = 0,
 	type = "npc",
@@ -84,6 +115,7 @@ mobs:register_mob("mobs_chaos_npcs:human", {
 })
 
 mobs:register_mob("mobs_chaos_npcs:orc", {
+	do_custom = npc_do_custom,
 	pathfinding = 1,
 	lifetimer = 0,
 	type = "monster",
