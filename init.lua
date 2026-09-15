@@ -112,7 +112,9 @@ mobs:register_mob("mobs_chaos_npcs:human", {
 	fall_damage = 1,
 	can_swim = false,
 	floats = 0,
-	air_damage = 1,
+	air_damage = 0,
+	blood_amount = 0,
+	blood_texture = "",
 })
 
 mobs:register_mob("mobs_chaos_npcs:orc", {
@@ -154,7 +156,9 @@ mobs:register_mob("mobs_chaos_npcs:orc", {
 	fall_damage = 1,
 	can_swim = false,
 	floats = 0,
-	air_damage = 1,
+	air_damage = 0,
+	blood_amount = 0,
+	blood_texture = "",
 })
 
 -- Spawning
