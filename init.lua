@@ -217,7 +217,7 @@ mobs:spawn({
 	neighbors = {"mobs_chaos_npcs:human_spawner"},
 	min_light = 0,
 	max_light = 15,
-	chance = 1000,
+	chance = 2,
 	active_object_count = 10,
 	min_height = 0,
 })
@@ -228,7 +228,7 @@ mobs:spawn({
 	neighbors = {"mobs_chaos_npcs:orc_spawner"},
 	min_light = 0,
 	max_light = 15,
-	chance = 1000,
+	chance = 2,
 	active_object_count = 10,
 	min_height = 0,
 	on_spawn = function(self, pos)
