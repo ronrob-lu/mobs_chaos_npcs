@@ -47,24 +47,7 @@ local orc_anim = {
 }
 
 
-
-local function human_do_custom(self, dtime)
-	if self.state == "attack" then
-		self.object:set_bone_position("character-human", {x=0, y=0, z=0}, {x=90, y=0, z=0})
-	else
-		self.object:set_bone_position("character-human", {x=0, y=0, z=0}, {x=0, y=0, z=0})
-	end
-	return nil
-end
-
 local function orc_do_custom(self, dtime)
-
-	if self.state == "attack" then
-		self.object:set_bone_position("character-orc", {x=0, y=0, z=0}, {x=90, y=0, z=0})
-	else
-		self.object:set_bone_position("character-orc", {x=0, y=0, z=0}, {x=0, y=0, z=0})
-	end
-
   if self.name == "mobs_chaos_npcs:orc" and not orcs_destroy then
 		return nil
 	end
@@ -114,7 +97,6 @@ local function is_valid_target(target)
 end
 
 mobs:register_mob("mobs_chaos_npcs:human", {
-	do_custom = human_do_custom,
 	pathfinding = 1,
 	lifetimer = 0,
 	type = "npc",
