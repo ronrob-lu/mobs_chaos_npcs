@@ -48,13 +48,15 @@ local orc_anim = {
 
 
 local function orc_do_custom(self, dtime)
-  if self.name == "mobs_chaos_npcs:orc" and not orcs_destroy then
+	if self.name == "mobs_chaos_npcs:orc" and not orcs_destroy then
 		return nil
 	end
 	self.destroy_timer = (self.destroy_timer or 0) + dtime
 	if self.destroy_timer >= 1.0 then
 		self.destroy_timer = 0
 		local pos = vector.round(self.object:get_pos())
+		local to_place = {}
+
 		for dx = -1, 1 do
 			for dz = -1, 1 do
 				if dx ~= 0 or dz ~= 0 then
@@ -62,20 +64,82 @@ local function orc_do_custom(self, dtime)
 						local p = {x = pos.x + dx, y = pos.y + dy, z = pos.z + dz}
 						local node = minetest.get_node(p)
 						if node.name ~= "air" and node.name ~= "ignore" then
-							local is_stone = minetest.get_item_group(node.name, "stone") > 0
-							local is_steel = string.find(node.name, "steel") ~= nil
-							local is_xpanes = string.find(node.name, "xpanes") ~= nil
-							local is_immortal = minetest.get_item_group(node.name, "immortal") > 0
-							local is_xpanes = string.find(node.name, "xpanes") ~= nil
-							local nodedef = minetest.registered_nodes[node.name]
-							local is_liquid = nodedef and (nodedef.liquidtype ~= "none")
+							local is_tree = minetest.get_item_group(node.name, "tree") > 0 or minetest.get_item_group(node.name, "leaves") > 0
+							local is_glass = string.find(node.name, "glass") ~= nil
+							local is_wood = string.find(node.name, "wood") ~= nil
+							local is_dirt = string.find(node.name, "dirt") ~= nil
+							local is_sand = string.find(node.name, "sand") ~= nil
 
-							if not is_stone and not is_steel and not is_xpanes and not is_immortal and not is_liquid then
+							local is_allowed = is_tree or is_glass or is_wood or is_dirt or is_sand
+
+							if is_allowed then
+								table.insert(to_place, {name = node.name, pos = {x = p.x, y = p.y, z = p.z}})
 								minetest.remove_node(p)
+
+								if is_tree then
+									local queue = {{x = p.x, y = p.y, z = p.z}}
+									local q_first = 1
+									local q_last = 1
+									local visited = {}
+									visited[minetest.hash_node_position(p)] = true
+									local destroyed_count = 0
+									local max_destroy = 150
+
+									while q_first <= q_last and destroyed_count < max_destroy do
+										local curr = queue[q_first]
+										q_first = q_first + 1
+
+										-- Check surrounding blocks (including above/below and sides)
+										for qdx = -1, 1 do
+											for qdy = -1, 1 do
+												for qdz = -1, 1 do
+													if qdx ~= 0 or qdy ~= 0 or qdz ~= 0 then
+														local npos = {x = curr.x + qdx, y = curr.y + qdy, z = curr.z + qdz}
+														local hash = minetest.hash_node_position(npos)
+
+														if not visited[hash] then
+															visited[hash] = true
+															local tnode = minetest.get_node(npos)
+
+															if tnode.name ~= "air" and tnode.name ~= "ignore" then
+																if minetest.get_item_group(tnode.name, "tree") > 0 or minetest.get_item_group(tnode.name, "leaves") > 0 then
+																	table.insert(to_place, {name = tnode.name, pos = {x = npos.x, y = npos.y, z = npos.z}})
+																	minetest.remove_node(npos)
+																	destroyed_count = destroyed_count + 1
+																	q_last = q_last + 1
+																	queue[q_last] = npos
+
+																	if destroyed_count >= max_destroy then
+																		break
+																	end
+																end
+															end
+														end
+													end
+													if destroyed_count >= max_destroy then break end
+												end
+												if destroyed_count >= max_destroy then break end
+											end
+											if destroyed_count >= max_destroy then break end
+										end
+									end
+								end
 							end
 						end
 					end
 				end
+			end
+		end
+
+		for _, item in ipairs(to_place) do
+			local random_pos = {
+				x = item.pos.x + math.random(-2, 2),
+				y = item.pos.y + math.random(0, 1),
+				z = item.pos.z + math.random(-2, 2)
+			}
+			local rnode = minetest.get_node(random_pos)
+			if rnode.name == "air" then
+				minetest.set_node(random_pos, {name = item.name})
 			end
 		end
 	end
