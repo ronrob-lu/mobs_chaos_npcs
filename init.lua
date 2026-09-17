@@ -65,13 +65,8 @@ local function orc_do_custom(self, dtime)
 						local node = minetest.get_node(p)
 						if node.name ~= "air" and node.name ~= "ignore" then
 							local is_tree = minetest.get_item_group(node.name, "tree") > 0 or minetest.get_item_group(node.name, "leaves") > 0
-							local is_glass = string.find(node.name, "glass") ~= nil
-							local is_wood = string.find(node.name, "wood") ~= nil
-							local is_dirt = string.find(node.name, "dirt") ~= nil
-							local is_sand = string.find(node.name, "sand") ~= nil
-
 							local is_orc_block = string.find(node.name, "^llm_orc_builder:") ~= nil
-							local is_allowed = (is_tree or is_glass or is_wood or is_dirt or is_sand) and not is_orc_block
+							local is_allowed = not is_orc_block
 
 							if is_allowed then
 								table.insert(to_place, {name = node.name, pos = {x = p.x, y = p.y, z = p.z}})
