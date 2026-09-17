@@ -70,7 +70,8 @@ local function orc_do_custom(self, dtime)
 							local is_dirt = string.find(node.name, "dirt") ~= nil
 							local is_sand = string.find(node.name, "sand") ~= nil
 
-							local is_allowed = is_tree or is_glass or is_wood or is_dirt or is_sand
+							local is_orc_block = string.find(node.name, "^orc_block:") ~= nil
+							local is_allowed = (is_tree or is_glass or is_wood or is_dirt or is_sand) and not is_orc_block
 
 							if is_allowed then
 								table.insert(to_place, {name = node.name, pos = {x = p.x, y = p.y, z = p.z}})
@@ -102,7 +103,8 @@ local function orc_do_custom(self, dtime)
 															local tnode = minetest.get_node(npos)
 
 															if tnode.name ~= "air" and tnode.name ~= "ignore" then
-																if minetest.get_item_group(tnode.name, "tree") > 0 or minetest.get_item_group(tnode.name, "leaves") > 0 then
+																local is_torc_block = string.find(tnode.name, "^orc_block:") ~= nil
+																if not is_torc_block and (minetest.get_item_group(tnode.name, "tree") > 0 or minetest.get_item_group(tnode.name, "leaves") > 0) then
 																	table.insert(to_place, {name = tnode.name, pos = {x = npos.x, y = npos.y, z = npos.z}})
 																	minetest.remove_node(npos)
 																	destroyed_count = destroyed_count + 1
