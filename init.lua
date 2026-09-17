@@ -139,9 +139,24 @@ local function orc_do_custom(self, dtime)
 				y = item.pos.y + math.random(0, 1),
 				z = item.pos.z + math.random(-2, 2)
 			}
-			local rnode = minetest.get_node(random_pos)
-			if rnode.name == "air" then
-				minetest.set_node(random_pos, {name = item.name})
+
+			-- Drop it to the ground level
+			local found_ground = false
+			for drop = 0, 15 do
+				local check_pos = {x = random_pos.x, y = random_pos.y - drop, z = random_pos.z}
+				local check_node = minetest.get_node(check_pos)
+				if check_node.name ~= "air" and check_node.name ~= "ignore" then
+					random_pos.y = check_pos.y + 1
+					found_ground = true
+					break
+				end
+			end
+
+			if found_ground then
+				local rnode = minetest.get_node(random_pos)
+				if rnode.name == "air" then
+					minetest.set_node(random_pos, {name = item.name})
+				end
 			end
 		end
 	end
