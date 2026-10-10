@@ -180,7 +180,7 @@ mobs:register_mob("mobs_chaos_npcs:human", {
 	type = "npc",
 	order = "wander",
 	jump = true,
-	jump_height = 3,
+	jump_height = 6,
 	stepheight = 1.1,
 	walk_chance = 70,
 	stand_chance = 30,
@@ -211,8 +211,8 @@ mobs:register_mob("mobs_chaos_npcs:human", {
 	water_damage = 1,
 	lava_damage = 5,
 	fall_damage = 1,
-	can_swim = false,
-	floats = 0,
+	can_swim = true,
+	floats = 1,
 	air_damage = 0,
 })
 
@@ -223,7 +223,7 @@ mobs:register_mob("mobs_chaos_npcs:orc", {
 	type = "monster",
 	order = "wander",
 	jump = true,
-	jump_height = 3,
+	jump_height = 6,
 	stepheight = 1.1,
 	walk_chance = 70,
 	stand_chance = 30,
@@ -253,8 +253,8 @@ mobs:register_mob("mobs_chaos_npcs:orc", {
 	water_damage = 1,
 	lava_damage = 5,
 	fall_damage = 1,
-	can_swim = false,
-	floats = 0,
+	can_swim = true,
+	floats = 1,
 	air_damage = 0,
 })
 
