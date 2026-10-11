@@ -67,7 +67,8 @@ local function orc_do_custom(self, dtime)
 							local is_tree = minetest.get_item_group(node.name, "tree") > 0 or minetest.get_item_group(node.name, "leaves") > 0
 							local is_orc_block = string.find(node.name, "^llm_orc_builder:") ~= nil
 							local is_xpanes = string.find(node.name, "^xpanes:") ~= nil
-							local is_allowed = not is_orc_block and not is_xpanes
+							local is_water = minetest.get_item_group(node.name, "water") > 0 or minetest.get_item_group(node.name, "liquid") > 0
+							local is_allowed = not is_orc_block and not is_xpanes and not is_water
 
 							if is_allowed then
 								table.insert(to_place, {name = node.name, pos = {x = p.x, y = p.y, z = p.z}})
@@ -101,7 +102,8 @@ local function orc_do_custom(self, dtime)
 															if tnode.name ~= "air" and tnode.name ~= "ignore" then
 																local is_torc_block = string.find(tnode.name, "^llm_orc_builder:") ~= nil
 																local is_txpanes = string.find(tnode.name, "^xpanes:") ~= nil
-																if not is_torc_block and not is_txpanes and (minetest.get_item_group(tnode.name, "tree") > 0 or minetest.get_item_group(tnode.name, "leaves") > 0) then
+																local is_twater = minetest.get_item_group(tnode.name, "water") > 0 or minetest.get_item_group(tnode.name, "liquid") > 0
+																if not is_torc_block and not is_txpanes and not is_twater and (minetest.get_item_group(tnode.name, "tree") > 0 or minetest.get_item_group(tnode.name, "leaves") > 0) then
 																	table.insert(to_place, {name = tnode.name, pos = {x = npos.x, y = npos.y, z = npos.z}})
 																	minetest.remove_node(npos)
 																	destroyed_count = destroyed_count + 1
@@ -142,7 +144,8 @@ local function orc_do_custom(self, dtime)
 			for drop = 0, 15 do
 				local check_pos = {x = random_pos.x, y = random_pos.y - drop, z = random_pos.z}
 				local check_node = minetest.get_node(check_pos)
-				if check_node.name ~= "air" and check_node.name ~= "ignore" then
+				local is_liquid = minetest.get_item_group(check_node.name, "water") > 0 or minetest.get_item_group(check_node.name, "liquid") > 0
+				if check_node.name ~= "air" and check_node.name ~= "ignore" and not is_liquid then
 					random_pos.y = check_pos.y + 1
 					found_ground = true
 					break
