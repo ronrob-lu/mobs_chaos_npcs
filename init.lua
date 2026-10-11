@@ -73,30 +73,9 @@ local function human_do_custom(self, dtime)
 							if ent.name ~= "mobs_chaos_npcs:human" and ent.name ~= "mobs_chaos_npcs:human_spawner" then
 								local is_enemy = ent.name == "mobs_chaos_npcs:orc"
 									or ent.type == "monster"
-									or (ent.name and (
-										string.find(ent.name, "monster") or
-										string.find(ent.name, "zombie") or
-										string.find(ent.name, "skeleton") or
-										string.find(ent.name, "creeper") or
-										string.find(ent.name, "spider") or
-										string.find(ent.name, "slime") or
-										string.find(ent.name, "phantom") or
-										string.find(ent.name, "enderman") or
-										string.find(ent.name, "witch") or
-										string.find(ent.name, "drowned") or
-										string.find(ent.name, "husk") or
-										string.find(ent.name, "stray") or
-										string.find(ent.name, "bogged") or
-										string.find(ent.name, "pillager") or
-										string.find(ent.name, "vindicator") or
-										string.find(ent.name, "evoker") or
-										string.find(ent.name, "ravager") or
-										string.find(ent.name, "wither") or
-										string.find(ent.name, "ghast") or
-										string.find(ent.name, "blaze") or
-										string.find(ent.name, "piglin") or
-										string.find(ent.name, "hoglin")
-									))
+									or ent.is_monster == true
+									or ent.hostile == true
+									or (ent.type ~= "npc" and ent.type ~= "animal" and ent.passive == false and not ent.owner)
 								if is_enemy then
 									self.attack = obj
 									self.state = "attack"
