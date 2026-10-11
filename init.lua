@@ -66,9 +66,10 @@ local function orc_do_custom(self, dtime)
 						if node.name ~= "air" and node.name ~= "ignore" then
 							local is_tree = minetest.get_item_group(node.name, "tree") > 0 or minetest.get_item_group(node.name, "leaves") > 0
 							local is_orc_block = string.find(node.name, "^llm_orc_builder:") ~= nil
+							local is_spawner = string.find(node.name, "spawner") ~= nil
 							local is_xpanes = string.find(node.name, "^xpanes:") ~= nil
 							local is_water = minetest.get_item_group(node.name, "water") > 0 or minetest.get_item_group(node.name, "liquid") > 0
-							local is_allowed = not is_orc_block and not is_xpanes and not is_water
+							local is_allowed = not is_orc_block and not is_spawner and not is_xpanes and not is_water
 
 							if is_allowed then
 								table.insert(to_place, {name = node.name, pos = {x = p.x, y = p.y, z = p.z}})
@@ -101,9 +102,10 @@ local function orc_do_custom(self, dtime)
 
 															if tnode.name ~= "air" and tnode.name ~= "ignore" then
 																local is_torc_block = string.find(tnode.name, "^llm_orc_builder:") ~= nil
+																local is_tspawner = string.find(tnode.name, "spawner") ~= nil
 																local is_txpanes = string.find(tnode.name, "^xpanes:") ~= nil
 																local is_twater = minetest.get_item_group(tnode.name, "water") > 0 or minetest.get_item_group(tnode.name, "liquid") > 0
-																if not is_torc_block and not is_txpanes and not is_twater and (minetest.get_item_group(tnode.name, "tree") > 0 or minetest.get_item_group(tnode.name, "leaves") > 0) then
+																if not is_torc_block and not is_tspawner and not is_txpanes and not is_twater and (minetest.get_item_group(tnode.name, "tree") > 0 or minetest.get_item_group(tnode.name, "leaves") > 0) then
 																	table.insert(to_place, {name = tnode.name, pos = {x = npos.x, y = npos.y, z = npos.z}})
 																	minetest.remove_node(npos)
 																	destroyed_count = destroyed_count + 1
