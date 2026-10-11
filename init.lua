@@ -46,9 +46,105 @@ local orc_anim = {
 	speed_normal = 1, speed_run = 1
 }
 
+local function is_valid_target(target)
+	if not target or not target:get_pos() then
+		return false
+	end
+	if target:is_player() then
+		return target:get_hp() > 0
+	else
+		local ent = target:get_luaentity()
+		if not ent then return false end
+		local hp = ent.health or (ent.object and ent.object:get_hp()) or 0
+		return hp > 0
+	end
+end
+
+local function human_do_custom(self, dtime)
+	if not is_valid_target(self.attack) then
+		local pos = self.object and self.object:get_pos()
+		if pos then
+			local objs = minetest.get_objects_inside_radius(pos, self.view_range or 15)
+			for _, obj in ipairs(objs) do
+				if obj ~= self.object then
+					if not obj:is_player() then
+						local ent = obj:get_luaentity()
+						if ent and is_valid_target(obj) then
+							if ent.name ~= "mobs_chaos_npcs:human" and ent.name ~= "mobs_chaos_npcs:human_spawner" then
+								local is_enemy = ent.name == "mobs_chaos_npcs:orc"
+									or ent.type == "monster"
+									or (ent.name and (
+										string.find(ent.name, "monster") or
+										string.find(ent.name, "zombie") or
+										string.find(ent.name, "skeleton") or
+										string.find(ent.name, "creeper") or
+										string.find(ent.name, "spider") or
+										string.find(ent.name, "slime") or
+										string.find(ent.name, "phantom") or
+										string.find(ent.name, "enderman") or
+										string.find(ent.name, "witch") or
+										string.find(ent.name, "drowned") or
+										string.find(ent.name, "husk") or
+										string.find(ent.name, "stray") or
+										string.find(ent.name, "bogged") or
+										string.find(ent.name, "pillager") or
+										string.find(ent.name, "vindicator") or
+										string.find(ent.name, "evoker") or
+										string.find(ent.name, "ravager") or
+										string.find(ent.name, "wither") or
+										string.find(ent.name, "ghast") or
+										string.find(ent.name, "blaze") or
+										string.find(ent.name, "piglin") or
+										string.find(ent.name, "hoglin")
+									))
+								if is_enemy then
+									self.attack = obj
+									self.state = "attack"
+									break
+								end
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+	return nil
+end
 
 local function orc_do_custom(self, dtime)
-  if self.name == "mobs_chaos_npcs:orc" and not orcs_destroy then
+	if not is_valid_target(self.attack) then
+		local pos = self.object and self.object:get_pos()
+		if pos then
+			local objs = minetest.get_objects_inside_radius(pos, self.view_range or 15)
+			for _, obj in ipairs(objs) do
+				if obj ~= self.object then
+					if obj:is_player() then
+						if obj:get_hp() > 0 then
+							local pname = obj:get_player_name()
+							local privs = minetest.get_player_privs(pname)
+							if not privs or not privs.peaceful_player then
+								self.attack = obj
+								self.state = "attack"
+								break
+							end
+						end
+					else
+						local ent = obj:get_luaentity()
+						if ent and is_valid_target(obj) then
+							if ent.name ~= "mobs_chaos_npcs:orc" and ent.name ~= "mobs_chaos_npcs:orc_spawner" then
+								self.attack = obj
+								self.state = "attack"
+								break
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+
+	if self.name == "mobs_chaos_npcs:orc" and not orcs_destroy then
 		return nil
 	end
 	self.destroy_timer = (self.destroy_timer or 0) + dtime
@@ -165,21 +261,8 @@ local function orc_do_custom(self, dtime)
 	return nil
 end
 
-local function is_valid_target(target)
-	if not target or not target:get_pos() then
-		return false
-	end
-	if target:is_player() then
-		return target:get_hp() > 0
-	else
-		local ent = target:get_luaentity()
-		if not ent then return false end
-		local hp = ent.health or (ent.object and ent.object:get_hp()) or 0
-		return hp > 0
-	end
-end
-
 mobs:register_mob("mobs_chaos_npcs:human", {
+	do_custom = human_do_custom,
 	pathfinding = 1,
 	lifetimer = 0,
 	type = "npc",
@@ -203,6 +286,7 @@ mobs:register_mob("mobs_chaos_npcs:human", {
 	damage = 4,
 	reach = 3,
 	attack_type = "dogfight",
+	specific_attack = {"mobs_chaos_npcs:orc"},
 	armor = 100,
 	passive = false,
 	attack_players = false,
@@ -246,6 +330,7 @@ mobs:register_mob("mobs_chaos_npcs:orc", {
 	damage = 5,
 	reach = 3,
 	attack_type = "dogfight",
+	specific_attack = {"mobs_chaos_npcs:human"},
 	armor = 100,
 	passive = false,
 	attack_players = true,
