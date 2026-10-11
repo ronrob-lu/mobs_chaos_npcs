@@ -208,7 +208,7 @@ mobs:register_mob("mobs_chaos_npcs:human", {
 	owner_loyal = true,
 	animation = human_anim,
 
-	water_damage = 1,
+	water_damage = 0,
 	lava_damage = 5,
 	fall_damage = 1,
 	can_swim = true,
@@ -250,7 +250,7 @@ mobs:register_mob("mobs_chaos_npcs:orc", {
 	group_attack = true,
 	animation = orc_anim,
 
-	water_damage = 1,
+	water_damage = 0,
 	lava_damage = 5,
 	fall_damage = 1,
 	can_swim = true,
